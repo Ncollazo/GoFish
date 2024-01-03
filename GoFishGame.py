@@ -83,7 +83,7 @@ def playerTurn(player_hand, bot_hands, count):
         if found:
             break
 
-def botTurn(player_hand, bot_hands, count):
+## def botTurn(player_hand, bot_hands, count):
     for i, bot_hand in enumerate(bot_hands):
         print(f"Bot {i + 1} Hand: {bot_hand}")
 
@@ -106,11 +106,11 @@ def botTurn(player_hand, bot_hands, count):
 def checkGameEnd(player_hand, bot_hands):
     if len(player_hand) == 0:
         print("You Won! (=^.^=)")
-        print("Paws-itively wonderful!")
+        print("You’re so tenta-cool!")
         return True
     elif all(len(hand) == 0 for hand in bot_hands):
         print("You Lost... (='-'=)")
-        print("Well... it ain't easy to be purr-fect")
+        print("Well... Don't trout yourself ")
         return True
     return False
 
