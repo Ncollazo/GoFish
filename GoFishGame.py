@@ -16,21 +16,31 @@ from random import randint
 # Initialize hands, bots, and number of bots
 # Deal the deck and remove 4 matched cards (book)
 # @param hand1 is the human player
-# @param bot_hands is a list of bot players' hands
-# @param num_bots is the number of bot players (1-6)
+# @param bot_hand1  bot 1 hand cards
+# @param bot_hand2  bot 2 hand cards
+# @param bot_hand2  bot 3 hand cards
 # @return the leftover cards (pond) after initialization of the deck
-def initializeHands(player_hand, bot_hands):
+def initializeHands(player_hand, bot_hand1, bot_hand2, bot_hand3):
     deck = GoFishDeck()
     deck.shuffle()
 
     count = 1
-    all_hands = [player_hand] + bot_hands
+
     while not deck.isEmpty():
-        card = deck.deal()
-        player_index = count % (len(bot_hands) + 1)
-        if not match(card, all_hands[player_index]):
-            all_hands[player_index].append(card)
-        count += 1
+        card = deck.deal()  
+        if count % 2 == 0:
+            if not match(card,player_hand):
+                hand1.append(card)
+        if count % 2 == 0: 
+            if not match(card,bot_hand1):
+                bot_hand1.append(card)  
+        if count % 2 == 0: 
+            if not match(card,bot_hand1):
+                bot_hand2.append(card)  
+        else: 
+            if not match(card,bot_hand1):
+                bot_hand3.append(card)  
+        count = count + 1 
 
     # Calculate the number of leftover cards in the pond
     pond = len(deck._deck) if hasattr(deck, '_deck') else 0
@@ -70,7 +80,7 @@ def playerTurn(player_hand, bot_hands, count):
 
     # Ask a specific bot for the chosen number
     # Loop through each bot's hand
-    # If the bot has the requested number, take the cards from the bot's hand and append to the player's hand
+    # If the bot has the requested         number, take the cards from the bot's hand and append to the player's hand
     # Break the loop if the cards are found
     found = False
     for bot_hand in bot_hands:
@@ -129,9 +139,9 @@ def main():
     bot_hand1 = []
     bot_hand2 = []
     bot_hand3 = []
-    bot_hands = [bot_hand1, bot_hand2, bot_hand3]
+    
 
-    pond = initializeHands(player_hand, bot_hands)
+    pond = initializeHands(player_hand, bot_hand1, bot_hand2, bot_hand3)
     
     #title of game 
     print("(='.'=)--Go Fish Game--(='.'=)")

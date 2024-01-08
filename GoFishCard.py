@@ -11,7 +11,7 @@ import random
 #
 class GoFishCard: 
     
-    # Creates a single FlerkenCard with a random cat color and breed
+    # Creates a single Card with a random suit  and numder
     # @param cardSuits, is the four allowed cat colors  
     # @param cardNum, is the eight allowed cat breeds  
     def __init__ (self, cardSuits, cardNum):
