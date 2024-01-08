@@ -21,31 +21,33 @@ from random import randint
 # @param bot_hand2  bot 3 hand cards
 # @return the leftover cards (pond) after initialization of the deck
 def initializeHands(player_hand, bot_hand1, bot_hand2, bot_hand3):
+    pond = []
+    
     deck = GoFishDeck()
     deck.shuffle()
 
-    count = 1
+    count = 0
 
     while not deck.isEmpty():
-        card = deck.deal()  
-        if count % 2 == 0:
-            if not match(card,player_hand):
-                hand1.append(card)
-        if count % 2 == 0: 
-            if not match(card,bot_hand1):
-                bot_hand1.append(card)  
-        if count % 2 == 0: 
-            if not match(card,bot_hand1):
-                bot_hand2.append(card)  
-        else: 
-            if not match(card,bot_hand1):
-                bot_hand3.append(card)  
-        count = count + 1 
+        card = deck.deal()
 
-    # Calculate the number of leftover cards in the pond
-    pond = len(deck._deck) if hasattr(deck, '_deck') else 0
+        # Distribute 7 cards to each player
+        if count < 7:
+            player_hand.append(card)
+        elif count < 14:
+            bot_hand1.append(card)
+        elif count < 21:
+            bot_hand2.append(card)
+        elif count < 28:
+            bot_hand3.append(card)
+       # Collect the remaining cards into the pond
+        else:
+            pond.append(card) 
+
+        count += 1
+
+   
     return pond
-
 
 # Match cards in the hand to form books of four cards with the same number
 # Group of 4 is a book. Used every round after the main player picks.
@@ -74,24 +76,6 @@ def match(hand):
 
 # Assuming you have initialized the hands for the player and bots
 
-def playerTurn(player_hand, bot_hands, count):
-    print("Your Hand: ", player_hand)
-    num_to_ask = int(input("Choose a number to ask from 1 to 13: "))
-
-    # Ask a specific bot for the chosen number
-    # Loop through each bot's hand
-    # If the bot has the requested         number, take the cards from the bot's hand and append to the player's hand
-    # Break the loop if the cards are found
-    found = False
-    for bot_hand in bot_hands:
-        for card in bot_hand:
-            if card.getNum() == num_to_ask:
-                player_hand.append(card)
-                bot_hand.remove(card)
-                found = True
-                break
-        if found:
-            break
 
 ## def botTurn(player_hand, bot_hands, count):
     for i, bot_hand in enumerate(bot_hands):
@@ -134,12 +118,12 @@ def main():
     ##bot_hands = [[] for _ in range(num_bots)]
 
 
-    # Split the deck among player and bots
+    # Split the deck among player and bots5r45tr4444444444444444444444444444444444tttttyy766yhyhytt6666ty
     player_hand = []
     bot_hand1 = []
     bot_hand2 = []
     bot_hand3 = []
-    
+    bot_hands = [bot_hand1,bot_hand2,bot_hand3]
 
     pond = initializeHands(player_hand, bot_hand1, bot_hand2, bot_hand3)
     
@@ -162,8 +146,25 @@ def main():
         #Player's turn
         if count % 2 == 0:
             print("Your Hand: ", player_hand)
-            # Implement player's turn logic
-            # Example: Ask for a card from a specific bot or handle player input
+            num_to_ask = int(input("Choose a number to ask from 1 to 13: "))
+             # Ask a specific bot for the chosen number
+             # Loop through each bot's hand
+             # If the bot has the requested         number, take the cards from the bot's hand and append to the player's hand
+              # Break the loop if the cards are found
+            found = False
+            for bot_hand in bot_hands:
+                for card in bot_hand:
+                    if card.getNum() == num_to_ask:
+                        player_hand.append(card)
+                        bot_hand.remove(card)
+                    else:
+                        player_hand.append(card)
+                        pond.remove(card)
+
+                found = True
+                break
+            if found:
+                break
         
         # Bot turns
         else:

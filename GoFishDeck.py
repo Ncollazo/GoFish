@@ -22,11 +22,10 @@ class GoFishDeck:
     #card numder   
     numder = ["one","two","three","four", "five","six","seven","eight","nine","ten","jack", "queen"," king"]
     
-    for color in suits:
-      
-      for breed in numder:
+    for suit in suits:
+      for num in numder:
        #making deck 52 cards
-        card = GoFishCard(color,breed)
+        card = GoFishCard(suit,num)
         self._deck.append(card)
    
     
