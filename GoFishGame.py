@@ -111,6 +111,7 @@ def main():
     count = 0  
 
     # a while loop that print out the cards hand 1 and bot hands card as "[]"   
+    bot_names = ["Tank Sinatra", "Elfish Presley", "Norman Baits"]
 
     while len(player_hand) > 0 and any(len(hand) > 0 for hand in bot_hands):
         # Check for matches and remove books
@@ -121,37 +122,48 @@ def main():
         # Player's turn
         if count % 2 == 0:
             print("Your Hand: ", player_hand)
-            print("[]" * len(bot_hands), "")
+            for i, bot_name in enumerate(bot_names, start=1):
+                print(f"Player {i}: {bot_name}")
+                print("[]" * len(bot_hands[i - 1]), "")
 
             ask_a_bot = int(input("Choose a player to ask from 1 to 3: "))  # Input to select a bot
             bot_index = ask_a_bot - 1 
             num_to_ask = int(input("Choose a number to ask from 1 to 13: "))
             found = False
             selected_bot_hand = bot_hands[bot_index]
-
-            for bot_hand in bot_hands:
-                for card in bot_hand:
-                    if card.getNum() == num_to_ask:
-                        player_hand.append(card)
-                        bot_hand.remove(card)
-                        found = True
-                        break
-
-                if found:
+            i = 0
+            while i < len(selected_bot_hand):
+                card = selected_bot_hand[i]
+                print(f"Checking card {card} in hand...")
+                if card.getNum() == num_to_ask:
+                    player_hand.append(card)
+                    del selected_bot_hand[i]
+                    found = True
+                    print(f"{bot_names[bot_index]} gave you {card}.")
                     break
+                else:
+                    i += 1           
+                
+            
 
             if not found:
+                print("Card not found in bot's hand.")
                 if len(pond) > 0:
                     card_from_pond = pond.pop()
                     player_hand.append(card_from_pond)
                     print(f"You picked {card_from_pond} from the pond.")
+                elif len(pond) == 0:
+                    print(f"There is no more in the pond.")
+                    print(f"Once you ask a player and they don't have the card, you gain nothing.")
 
         # Bot turns
         else:
             for i, bot_hand in enumerate(bot_hands):
                 print(f"Bot {i + 1} Hand: {bot_hand}")
                 # Implement bot's turn logic
+
                 # Example: Ask for a card from the player or from another bot
+                #c
 
         # Check game end conditions
         if checkGameEnd(player_hand, bot_hands):
