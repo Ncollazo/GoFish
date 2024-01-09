@@ -74,29 +74,6 @@ def match(hand):
     
     return books
 
-# Assuming you have initialized the hands for the player and bots
-
-
-## def botTurn(player_hand, bot_hands, count):
-    for i, bot_hand in enumerate(bot_hands):
-        print(f"Bot {i + 1} Hand: {bot_hand}")
-
-        # Bot asks for a random number
-        num_to_ask = randint(1, 13)
-
-        # Similar logic as the player's turn
-        # If the player has the requested number, take the cards from the player's hand and append to the bot's hand
-        # Break the loop if the cards are found
-        found = False
-        for card in player_hand:
-            if card.getNum() == num_to_ask:
-                bot_hand.append(card)
-                player_hand.remove(card)
-                found = True
-                break
-        if found:
-            break
-
 def checkGameEnd(player_hand, bot_hands):
     if len(player_hand) == 0:
         print("You Won! (=^.^=)")
@@ -118,7 +95,7 @@ def main():
     ##bot_hands = [[] for _ in range(num_bots)]
 
 
-    # Split the deck among player and bots5r45tr4444444444444444444444444444444444tttttyy766yhyhytt6666ty
+    # Split the deck among player and bots
     player_hand = []
     bot_hand1 = []
     bot_hand2 = []
@@ -136,49 +113,52 @@ def main():
     # a while loop that print out the cards hand 1 and bot hands card as "[]"   
 
     while len(player_hand) > 0 and any(len(hand) > 0 for hand in bot_hands):
-
         # Check for matches and remove books
         match(player_hand)
-
         for bot_hand in bot_hands:
             match(bot_hand) 
-     
-        #Player's turn
+
+        # Player's turn
         if count % 2 == 0:
             print("Your Hand: ", player_hand)
+            print("[]" * len(bot_hands), "")
+
+            ask_a_bot = int(input("Choose a player to ask from 1 to 3: "))  # Input to select a bot
+            bot_index = ask_a_bot - 1 
             num_to_ask = int(input("Choose a number to ask from 1 to 13: "))
-             # Ask a specific bot for the chosen number
-             # Loop through each bot's hand
-             # If the bot has the requested         number, take the cards from the bot's hand and append to the player's hand
-              # Break the loop if the cards are found
             found = False
+            selected_bot_hand = bot_hands[bot_index]
+
             for bot_hand in bot_hands:
                 for card in bot_hand:
                     if card.getNum() == num_to_ask:
                         player_hand.append(card)
                         bot_hand.remove(card)
-                    else:
-                        player_hand.append(card)
-                        pond.remove(card)
+                        found = True
+                        break
 
-                found = True
-                break
-            if found:
-                break
-        
+                if found:
+                    break
+
+            if not found:
+                if len(pond) > 0:
+                    card_from_pond = pond.pop()
+                    player_hand.append(card_from_pond)
+                    print(f"You picked {card_from_pond} from the pond.")
+
         # Bot turns
         else:
             for i, bot_hand in enumerate(bot_hands):
-                print("Bot {i + 1} Hand: {bot_hand}")
+                print(f"Bot {i + 1} Hand: {bot_hand}")
                 # Implement bot's turn logic
                 # Example: Ask for a card from the player or from another bot
-        
-       # Check game end conditions
+
+        # Check game end conditions
         if checkGameEnd(player_hand, bot_hands):
             break
 
-
         count += 1
+      
       
 
             
