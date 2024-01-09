@@ -1,19 +1,17 @@
 
 #N.Collazo
 #
-#GoFishCard
-# making the cats and Flerken to make a card
+#GoFishCard.py
 # 
 #
-
 
 import random
 #
 class GoFishCard: 
     
     # Creates a single Card with a random suit  and numder
-    # @param cardSuits, is the four allowed cat colors  
-    # @param cardNum, is the eight allowed cat breeds  
+    # @param cardSuits, is the four allowed  
+    # @param cardNum, is the 13 allowed  
     def __init__ (self, cardSuits, cardNum):
         
         #card numder   
@@ -22,11 +20,11 @@ class GoFishCard:
         # card suits 
         suits = ["spades","hearts","diamonds","clubs"]
         
-          #assering the mesges the it can only be 4 colors
+          
         assert cardSuits.lower() in suits ,"Error: only suits can be only theses 4 types"
         
 
-        # assering the mesges the it can only be 8 breeds
+
         assert cardNum.lower() in numder , "Error: only num it can only be theses 13 numders"
         
         self._numder = cardNum
