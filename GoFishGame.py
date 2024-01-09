@@ -132,19 +132,18 @@ def main():
             found = False
             selected_bot_hand = bot_hands[bot_index]
             i = 0
-            while i < len(selected_bot_hand):
+            i = len(selected_bot_hand) - 1
+            while i >= 0:
                 card = selected_bot_hand[i]
                 print(f"Checking card {card} in hand...")
-                if card.getNum() == num_to_ask:
-                    player_hand.append(card)
-                    del selected_bot_hand[i]
-                    found = True
-                    print(f"{bot_names[bot_index]} gave you {card}.")
-                    break
-                else:
-                    i += 1           
-                
-            
+            if card.getNum() == num_to_ask:
+                player_hand.append(card)
+                del selected_bot_hand[i]
+                found = True
+                print(f"{bot_names[bot_index]} gave you {card}.")
+                break
+            else:
+                i -= 1        
 
             if not found:
                 print("Card not found in bot's hand.")

@@ -23,7 +23,7 @@ class GoFishCard:
         
         assert cardNum.lower() in num_to_int.keys(), "Error: Card number should be one of the thirteen types."
         
-        self._numder = num_to_int[cardNum.lower()]
+        self._numder = cardNum.lower()
         self._suits = cardSuits.lower()
       
     # number of the card as a string 
