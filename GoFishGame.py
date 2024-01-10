@@ -86,17 +86,11 @@ def checkGameEnd(player_hand, bot_hands):
         return True
     return False
 
+def choose_number(bot_hands):
+    all_cards = [card for hand in bot_hands for card in hand]
 
-def choose_number(hands):
-    # Logic to choose the number from the combined hands (player and bots)
-    # If there's a number that appears multiple times, prioritize it
-    # Otherwise, choose randomly
-
+    # Calculate the number counts within the bot's hands
     num_counts = {}
-
-    # Combine all hands into a single list
-    all_cards = [card for hand in hands for card in hand]
-
     for card in all_cards:
         num = card.getNum()
         if num in num_counts:
@@ -104,15 +98,31 @@ def choose_number(hands):
         else:
             num_counts[num] = 1
 
-    # Find numbers that appear more than once
-    multiple_options = [num for num, count in num_counts.items() if count >= 2]
+    # Find numbers that appear multiple times (more than two cards)
+    multiple_options = [num for num, count in num_counts.items() if count >= 3]
 
     if multiple_options:
-        return random.choice(multiple_options)  # Choose from numbers that appear multiple times
+        return random.choice(multiple_options)  # Choose from numbers that appear three or more times
     else:
+        # If there are no numbers with three or more cards, choose randomly from available numbers
         available_numbers = list(num_counts.keys())
-        
-        return random.choice(available_numbers)  # Choose randomly if no number appears more than once
+        return random.choice(available_numbers)
+
+def organize_hand(hand):
+    organized_hand = {}
+    
+    for card in hand:
+        num = card.getNum()
+        if num in organized_hand:
+            organized_hand[num].append(card)
+        else:
+            organized_hand[num] = [card]
+    
+    organized = []
+    for key in sorted(organized_hand.keys()):
+        organized.extend(organized_hand[key])
+    
+    return organized   
 
 def main():
 
@@ -130,6 +140,9 @@ def main():
     bot_hand2 = []
     bot_hand3 = []
     bot_hands = [bot_hand1,bot_hand2,bot_hand3]
+    all_players = [player_hand,bot_hand1,bot_hand2,bot_hand3]
+    bot_names = ["Tank Sinatra", "Elfish Presley", "Norman Baits"]
+    all_names = ["You","Tank Sinatra", "Elfish Presley", "Norman Baits"]
 
     pond = initializeHands(player_hand, bot_hand1, bot_hand2, bot_hand3)
     
@@ -140,7 +153,6 @@ def main():
     count = 0  
 
     # a while loop that print out the cards hand 1 and bot hands card as "[]"   
-    bot_names = ["Tank Sinatra", "Elfish Presley", "Norman Baits"]
 
     while len(player_hand) > 0 and any(len(hand) > 0 for hand in bot_hands):
     # Check for matches and remove books
@@ -151,13 +163,26 @@ def main():
 
     # Player's turn
         if count % 2 == 0:
+            player_hand = organize_hand(player_hand)
             print("Your Hand: ", player_hand)
+            print("[]" * len(player_hand), "")
             for i, bot_name in enumerate(bot_names, start=1):
                 print(f"Player {i}: {bot_name}")
                 print("[]" * len(bot_hands[i - 1]), "")
+                print(f"{bot_name}'s hand {organize_hand(bot_hands[i - 1])}")
 
-        ask_a_bot = int(input("Choose a player to ask from 1 to 3: "))  # Input to select a bot
-        bot_index = ask_a_bot - 1 
+
+        while True:
+            try:
+                ask_a_bot = int(input("Choose a player to ask from 1 to 3: "))  # Input to select a bot
+                bot_index = ask_a_bot - 1
+                if ask_a_bot in [1, 2, 3]:
+                    break
+                else:
+                    print("Please enter a number from 1 to 3.")
+            except ValueError:
+                print("Please enter a valid number.")
+
         num_to_ask = int(input("Choose a number to ask from 1 to 13: "))
         found = False
         selected_bot_hand = bot_hands[bot_index]
@@ -165,8 +190,6 @@ def main():
         i = 0
         while i < len(selected_bot_hand):
             card = selected_bot_hand[i]
-            print(f"Checking card {card} in hand...")
-            print(f"Card Number: {card.getNum()}, Num to Ask: {num_to_ask}")
             if card.getNum() == num_to_ask:
                 player_hand.append(card)
                 selected_bot_hand.remove(card)
@@ -177,45 +200,49 @@ def main():
                 i += 1
 
         if not found:
-            print("Card not found in bot's hand.")
+            print(f"{card} not found in {bot_names[bot_index]}'s hand.")
             if len(pond) > 0:
                 card_from_pond = pond.pop()
                 player_hand.append(card_from_pond)
                 print(f"You picked {card_from_pond} from the pond.")
             elif len(pond) == 0:
                 print(f"There is no more in the pond.")
-                print(f"Once you ask a player and they don't have the card, you gain nothing.")
 
         # Bot turns
-        #I need to choose a random bot including the player from a list. 
-        #And once that bot is chosen they'll ask a number between one and 13 and choose it 
-        #how they choose the number will be if they have more than two cards of the same
-        # number they will be more likely to choose that number if they do not they choose a random number that is in their deck if they asked a player a number
-        # they will not ask the player the same number until all four players have played again.
-        num_bots = len(bot_hands)
-        all_players = [player_hand] + bot_hands  # Combine player and bot hands
-        all_names = ["You"] + bot_names  # Combine player and bot names
+        for i in range(len(bot_hands)):
+            bot_hand = bot_hands[i]
+            bot_name = bot_names[i]
+            print("this is turn", bot_name )
 
-        for i, hand in enumerate(all_players):
-            print(f"Player {i + 1} Hand: {hand}")
-    
-        for i, hand in enumerate(all_players):
-            chosen_player_hand = all_players[i]
-            num_to_ask = choose_number(chosen_player_hand)  # Choose the number to ask
+            # Get the number to ask using the choose_number function
+            num_to_ask = choose_number(bot_hands)       
+
+            # Randomly choose a player to remove cards, excluding the current bot
+            available_players = [player for player in all_players if player != bot_hand]
+            chosen_player = random.choice(available_players)
+            chosen_player_name = chosen_player
+
+            # Ask the player for the chosen number
+            found = False
+            for card in chosen_player:
+                if card.getNum() == num_to_ask:
+                    bot_hand.append(card)
+                    chosen_player.remove(card)
+                    found = True
+                    chosen_player_name = [name for name in all_names if chosen_player in all_players][0]
+                    print(f"{bot_name} took {card} from {chosen_player_name}.")
+                    break
         
-        # Ask the player for the chosen number
-        found = False
-        for card in all_players[i]:
-            if card.getNum() == num_to_ask:
-                chosen_player_hand.append(card)
-                all_players[i].remove(card)
-                found = True
-                print(f"{all_names[i]} took {card} from {all_names[i]}.")
-                break
-        
-        if not found:
-            print(f"{all_names[i]} doesn't have {num_to_ask}.")
-            # Handle picking from the pond or alternative strategy
+            if not found:
+                chosen_player_name = [name for name in all_names if chosen_player in all_players][0]
+                print(f"{chosen_player_name} doesn't have {num_to_ask}.")
+                # Handle picking from the pond or alternative strategy
+                if len(pond) > 0:
+                    card_from_pond = pond.pop()
+                    player_hand.append(card_from_pond)
+                elif len(pond) == 0:
+                    print(f"There is no more in the pond.")
+                    print(f"Once you ask a player and they don't have the card, you gain nothing.")
 
         # Check game end conditions
         if checkGameEnd(player_hand, bot_hands):

@@ -2,7 +2,7 @@
 #N,Collazo
 #
 #GoFishDeck.py
-# making the cats and Flerken card to make a Flerken deck 
+# 
  
 import random
 from GoFishCard import GoFishCard
