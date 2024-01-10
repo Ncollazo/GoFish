@@ -9,45 +9,37 @@ import random
 #
 class GoFishCard: 
     
-    # Creates a single Card with a random suit  and numder
-    # @param cardSuits, is the four allowed  
-    # @param cardNum, is the 13 allowed  
     def __init__(self, cardSuits, cardNum):
         num_to_int = {
-            "one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6,
-            "seven": 7, "eight": 8, "nine": 9, "ten": 10, "jack": 11, "queen": 12, "king": 13
+            "One": 1, "Two": 2, "Three": 3, "Four": 4, "Five": 5, "Six": 6,
+            "Seven": 7, "Eight": 8, "Nine": 9, "Ten": 10, "Jack": 11, "Queen": 12, "King": 13
         }
         
-        suits = ["spades", "hearts", "diamonds", "clubs"]
-        assert cardSuits.lower() in suits, "Error: Suit should be one of the four types."
+        suits = ["Spades", "Hearts", "Diamonds", "Clubs"]
+        assert cardSuits.capitalize() in suits, "Error: Suit should be one of the four types."
         
-        assert cardNum.lower() in num_to_int.keys(), "Error: Card number should be one of the thirteen types."
+        assert cardNum.capitalize() in num_to_int.keys(), "Error: Card number should be one of the thirteen types."
         
-        self._numder = cardNum.lower()
-        self._suits = cardSuits.lower()
-      
-    # number of the card as a string 
-    #@return  the card num as a string in lowercase.
-    def getNum(self):
-        return self._numder
+        self._num_to_int = num_to_int[cardNum.capitalize()]
+        self._suits = cardSuits.capitalize()
+        self._int_to_num = {v: k for k, v in num_to_int.items()}
+
+    def getKeyFromValue(self, value):
+        return self._int_to_num.get(value)
     
-    # suit of the card  as a string 
-    #return suits of the card as a string in lowercase
+    def getNum(self):
+        return self._num_to_int
+
     def getSuits(self):
         return self._suits
     
+    def __eq__(self, other):
+        return self._num_to_int == other.getNum()
     
-    #  two cards are equivalent (True) or not (False).
-    # @param other,is a diffent card
-    # @return the card if = to other card    
-    def __eq__(self,other): 
-        if(self._numder == other.getNum()):
-                return True
-        return False
-    
-    #string representation of the card of the form capitalized first letter of color and capitalized breed
     def __repr__(self):
-        card_suits = self._suits[0].upper()
-        card_num = str(self._numder).upper()
+        card_suits = self._suits
+        card_num = self.getKeyFromValue(self._num_to_int)
         return card_suits + ":" + card_num
+
+
         
