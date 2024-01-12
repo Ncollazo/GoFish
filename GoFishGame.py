@@ -69,10 +69,10 @@ def match(hand):
     for num, cards in match_dict.items():
         if len(cards) == 4:  # If there are 4 cards with the same number, it forms a book
             books.extend(cards)
+            print(f"Match found for {num}!")
     
     for book in books:  # Remove the book from the hand
         hand.remove(book)
-    
     return books
 
 def checkGameEnd(player_hand, bot_hands):
@@ -80,7 +80,7 @@ def checkGameEnd(player_hand, bot_hands):
         print("You Won! (=^.^=)")
         print("You’re so tenta-cool!")
         return True
-    elif all(len(hand) == 0 for hand in bot_hands):
+    elif any(len(hand) == 0 for hand in bot_hands):
         print("You Lost... (='-'=)")
         print("Well... Don't trout yourself ")
         return True
@@ -124,6 +124,13 @@ def organize_hand(hand):
     
     return organized   
 
+# Add a function to print the status of hands
+def print_hand_status(player_hand, bot_hands, bot_names):
+    print("Your Hand: ", player_hand)
+    for i, bot_name in enumerate(bot_names, start=1):
+        print(f"Player {i}: {bot_name}'s hand {bot_hands[i-1]}")
+    print()
+
 def main():
 
    # Get the number of bots
@@ -142,10 +149,15 @@ def main():
     bot_hands = [bot_hand1,bot_hand2,bot_hand3]
     all_players = [player_hand,bot_hand1,bot_hand2,bot_hand3]
     bot_names = ["Tank Sinatra", "Elfish Presley", "Norman Baits"]
-    all_names = ["You","Tank Sinatra", "Elfish Presley", "Norman Baits"]
+    hands = {
+        "You": player_hand,
+        "Tank Sinatra": bot_hand1,
+        "Elfish Presley": bot_hand2,
+        "Norman Baits": bot_hand3
+    }
 
     pond = initializeHands(player_hand, bot_hand1, bot_hand2, bot_hand3)
-    
+
     #title of game 
     print("(='.'=)--Go Fish Game--(='.'=)")
     
@@ -185,7 +197,7 @@ def main():
 
         num_to_ask = int(input("Choose a number to ask from 1 to 13: "))
         found = False
-        selected_bot_hand = bot_hands[bot_index]
+        selected_bot_hand = hands[bot_names[bot_index]]
         
         i = 0
         while i < len(selected_bot_hand):
@@ -200,7 +212,7 @@ def main():
                 i += 1
 
         if not found:
-            print(f"{card} not found in {bot_names[bot_index]}'s hand.")
+            print(f"{num_to_ask} not found in {bot_names[bot_index]}'s hand.")
             if len(pond) > 0:
                 card_from_pond = pond.pop()
                 player_hand.append(card_from_pond)
@@ -221,7 +233,9 @@ def main():
             available_players = [player for player in all_players if player != bot_hand]
             chosen_player = random.choice(available_players)
             chosen_player_name = chosen_player
-
+            chosen_player_name = [name for name, hand in hands.items() if chosen_player == hand][0]
+            
+            
             # Ask the player for the chosen number
             found = False
             for card in chosen_player:
@@ -229,17 +243,20 @@ def main():
                     bot_hand.append(card)
                     chosen_player.remove(card)
                     found = True
-                    chosen_player_name = [name for name in all_names if chosen_player in all_players][0]
                     print(f"{bot_name} took {card} from {chosen_player_name}.")
+                    print(chosen_player_name)
                     break
         
             if not found:
-                chosen_player_name = [name for name in all_names if chosen_player in all_players][0]
                 print(f"{chosen_player_name} doesn't have {num_to_ask}.")
+                print(f"{num_to_ask} not found in {chosen_player_name}'s hand. pick form ")
                 # Handle picking from the pond or alternative strategy
                 if len(pond) > 0:
+                    lenpond= len(pond) 
+                    print("is left in pond",lenpond)
                     card_from_pond = pond.pop()
                     player_hand.append(card_from_pond)
+                    print(f"{bot_name} picked {card_from_pond} from the pond.")
                 elif len(pond) == 0:
                     print(f"There is no more in the pond.")
                     print(f"Once you ask a player and they don't have the card, you gain nothing.")
@@ -249,6 +266,7 @@ def main():
             break
 
         count += 1
+        print_hand_status(player_hand, bot_hands, bot_names)
                 
 # end of main     
 main()        
