@@ -246,7 +246,7 @@ def main():
                     print(f"{bot_name} took {card} from {chosen_player_name}.")
                     print(chosen_player_name)
                     break
-        
+    
             if not found:
                 print(f"{chosen_player_name} doesn't have {num_to_ask}.")
                 print(f"{num_to_ask} not found in {chosen_player_name}'s hand. pick form ")
